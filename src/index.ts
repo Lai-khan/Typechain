@@ -43,12 +43,12 @@ let blockchain: Block[] = [genesisBlock];
 
 const getBlockchain = () :Block[] => blockchain;
 
-const getLatestBlcok = () :Block => blockchain[blockchain.length - 1];
+const getLatestBlock = () :Block => blockchain[blockchain.length - 1];
 
 const  getNewTimestamp = () :number => Math.round(new Date().getTime() / 1000);
 
 const createNewBlock = (data:string) :Block => {
-    const previousBlock : Block = getLatestBlcok();
+    const previousBlock : Block = getLatestBlock();
     const newIndex : number = previousBlock.index + 1;
     const newTimestamp : number = getNewTimestamp();
     const newHash : string = Block.calculateBlockHash(
@@ -67,6 +67,8 @@ const createNewBlock = (data:string) :Block => {
     return newBlcok;
 }
 
+const getHashforBlcok = (aBlock:Block) :string => Block.calculateBlockHash(aBlock.index, aBlock.previousHash, aBlock.timestamp, aBlock.data);
+
 const isBlockValid = (candidateBlock: Block, previousBlock: Block) :boolean => {
     if(!Block.validateStructure(candidateBlock)) {
         return false;
@@ -74,7 +76,17 @@ const isBlockValid = (candidateBlock: Block, previousBlock: Block) :boolean => {
         return false;
     } else if(previousBlock.hash !== candidateBlock.previousHash) {
         return false;
-    } else if()
+    } else if(getHashforBlcok(candidateBlock) != candidateBlock.hash) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+const addBlock = (candidateBlock:Block) :void => {
+    if(isBlockValid(candidateBlock, getLatestBlock())) {
+        blockchain.push(candidateBlock);
+    }
 }
 
 export {};
